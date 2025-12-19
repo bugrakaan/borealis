@@ -5,7 +5,7 @@ An interactive, animated canvas background with noise-based patterns and visual 
 [![npm version](https://badge.fury.io/js/@diabolic%2Fborealis.svg)](https://www.npmjs.com/package/@diabolic/borealis)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-https://github.com/user-attachments/assets/2a949123-8497-4c38-a487-ba76973ad559
+https://github.com/bugrakaan/borealis/raw/main/docs/borealis.webm
 
 > 🎬 [Live Demo](https://bugrakaan.github.io/borealis/)
 
