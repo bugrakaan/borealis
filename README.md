@@ -2,7 +2,7 @@
 
 An interactive, animated canvas background with noise-based patterns and visual effects.
 
-[![npm version](https://badge.fury.io/js/@bugrakaan%2Fborealis.svg)](https://www.npmjs.com/package/@bugrakaan/borealis)
+[![npm version](https://badge.fury.io/js/@diabolic%2Fborealis.svg)](https://www.npmjs.com/package/@diabolic/borealis)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 https://github.com/user-attachments/assets/897d9ca9-2ac9-4b55-adaa-158a704aa220
@@ -31,29 +31,29 @@ https://github.com/user-attachments/assets/897d9ca9-2ac9-4b55-adaa-158a704aa220
 ### npm
 
 ```bash
-npm install @bugrakaan/borealis
+npm install @diabolic/borealis
 ```
 
 ### yarn
 
 ```bash
-yarn add @bugrakaan/borealis
+yarn add @diabolic/borealis
 ```
 
 ### pnpm
 
 ```bash
-pnpm add @bugrakaan/borealis
+pnpm add @diabolic/borealis
 ```
 
 ### CDN
 
 ```html
 <!-- UMD (Global variable) -->
-<script src="https://unpkg.com/@bugrakaan/borealis/dist/borealis.min.js"></script>
+<script src="https://unpkg.com/@diabolic/borealis/dist/borealis.min.js"></script>
 
 <!-- Or from jsDelivr -->
-<script src="https://cdn.jsdelivr.net/npm/@bugrakaan/borealis/dist/borealis.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@diabolic/borealis/dist/borealis.min.js"></script>
 ```
 
 ### Direct Script Include
@@ -67,7 +67,7 @@ pnpm add @bugrakaan/borealis
 ### ES Module
 
 ```javascript
-import Borealis from '@bugrakaan/borealis';
+import Borealis from '@diabolic/borealis';
 
 // Create with default options (fullscreen)
 const borealis = new Borealis();
@@ -104,7 +104,7 @@ const borealis = new Borealis({
 ### CommonJS
 
 ```javascript
-const Borealis = require('@bugrakaan/borealis');
+const Borealis = require('@diabolic/borealis');
 
 const borealis = new Borealis();
 ```
@@ -112,7 +112,7 @@ const borealis = new Borealis();
 ### Browser (UMD)
 
 ```html
-<script src="https://unpkg.com/@bugrakaan/borealis/dist/borealis.min.js"></script>
+<script src="https://unpkg.com/@diabolic/borealis/dist/borealis.min.js"></script>
 <script>
     const borealis = new Borealis({
         effect: { type: 'wave' }

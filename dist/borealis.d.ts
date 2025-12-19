@@ -1,4 +1,4 @@
-declare module '@bugrakaan/borealis' {
+declare module '@diabolic/borealis' {
     export interface EffectOptions {
         /** Effect type: 'none', 'wave', or 'twinkle' */
         type?: 'none' | 'wave' | 'twinkle';

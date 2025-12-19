@@ -1,5 +1,5 @@
 {
-  "name": "@bugrakaan/borealis",
+  "name": "@diabolic/borealis",
   "version": "1.0.0",
   "description": "Interactive animated canvas background with noise patterns, wave effects, and aurora colors",
   "type": "module",
