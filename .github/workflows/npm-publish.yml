@@ -19,6 +19,9 @@ jobs:
     runs-on: ubuntu-latest
     # Safety check: only run if manually confirmed
     if: github.event.inputs.confirm == 'publish'
+    permissions:
+      contents: read
+      id-token: write  # Required for npm provenance
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -35,7 +38,7 @@ jobs:
       - name: Build
         run: npm run build
       
-      - name: Publish to npm
-        run: npm publish
+      - name: Publish to npm with provenance
+        run: npm publish --provenance --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
