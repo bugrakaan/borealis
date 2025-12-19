@@ -1,0 +1,60 @@
+{
+  "name": "@bugrakaan/borealis",
+  "version": "1.0.0",
+  "description": "Interactive animated canvas background with noise patterns, wave effects, and aurora colors",
+  "type": "module",
+  "main": "dist/borealis.js",
+  "module": "dist/borealis.esm.js",
+  "browser": "dist/borealis.min.js",
+  "unpkg": "dist/borealis.min.js",
+  "jsdelivr": "dist/borealis.min.js",
+  "types": "dist/borealis.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/borealis.esm.js",
+      "require": "./dist/borealis.js",
+      "browser": "./dist/borealis.min.js"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "rollup -c && cp src/borealis.d.ts dist/",
+    "build:watch": "rollup -c -w",
+    "prepublishOnly": "npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bugrakaan/borealis.git"
+  },
+  "keywords": [
+    "canvas",
+    "animation",
+    "background",
+    "particles",
+    "noise",
+    "simplex",
+    "aurora",
+    "wave",
+    "twinkle",
+    "effects",
+    "interactive",
+    "visualization"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/bugrakaan/borealis/issues"
+  },
+  "homepage": "https://bugrakaan.github.io/borealis/",
+  "devDependencies": {
+    "@rollup/plugin-terser": "^0.4.4",
+    "rollup": "^4.9.1"
+  }
+}

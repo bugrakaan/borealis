@@ -1,0 +1,23 @@
+# Source files
+src/
+
+# Config files
+rollup.config.js
+.gitignore
+.github/
+
+# Development files
+*.log
+.DS_Store
+node_modules/
+
+# Demo files
+docs/
+demo/
+examples/
+
+# Test files
+test/
+tests/
+*.test.js
+*.spec.js

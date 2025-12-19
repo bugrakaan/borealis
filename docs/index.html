@@ -1,0 +1,1282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Borealis - Interactive Animated Background</title>
+    
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="Borealis is an interactive, animated canvas background with noise-based patterns, wave effects, and aurora colors. Lightweight, customizable, and beautiful.">
+    <meta name="keywords" content="canvas, animation, background, particles, noise, simplex, aurora, wave, twinkle, effects, javascript, library">
+    <meta name="author" content="Borealis">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Borealis - Interactive Animated Background">
+    <meta property="og:description" content="Beautiful animated canvas backgrounds with noise patterns, wave effects, and aurora colors.">
+    <meta property="og:image" content="https://bugrakaan.github.io/borealis/borealis.webm">
+    
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Borealis - Interactive Animated Background">
+    <meta name="twitter:description" content="Beautiful animated canvas backgrounds with noise patterns, wave effects, and aurora colors.">
+    
+    <!-- Favicon -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✨</text></svg>">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #fff;
+            /* background-image: url('demobg.png'); */
+            background: #0a0a1a
+        }
+
+        canvas {
+            /* background: linear-gradient(248deg, #7923DD4d 0%, #008F754d 49.1%, #7923DD4d 99.15%); */
+        }
+
+        .content {
+            text-align: center;
+            z-index: 10;
+            position: relative;
+        }
+
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(90deg, #e94560, #f9d423, #e94560);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: shine 3s linear infinite;
+        }
+
+        @keyframes shine {
+            to { background-position: 200% center; }
+        }
+
+        p {
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 2rem;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            text-transform: lowercase;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #e94560, #f9d423);
+            color: #1a1a2e;
+            font-weight: bold;
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .controls {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(10px);
+            padding: 15px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            z-index: 100;
+            width: 420px;
+            max-height: calc(100vh - 40px);
+            overflow-y: auto;
+        }
+
+        .controls::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .controls::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 3px;
+        }
+
+        .controls::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 3px;
+        }
+
+        .controls::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .controls h3 {
+            font-size: 14px;
+            margin-bottom: 15px;
+            text-transform: lowercase;
+            color: rgba(255, 255, 255, 0.9);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 10px;
+        }
+
+        .controls-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .controls-column {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .controls-footer {
+            grid-column: 1 / -1;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .control-group {
+            margin-bottom: 10px;
+        }
+
+        .control-group:last-child {
+            margin-bottom: 0;
+        }
+
+        .control-group label {
+            display: block;
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.6);
+            margin-bottom: 5px;
+            text-transform: lowercase;
+        }
+
+        select {
+            width: 100%;
+            padding: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 6px;
+            color: #fff;
+            font-size: 12px;
+            cursor: pointer;
+            box-sizing: border-box;
+        }
+
+        select option {
+            background: #1a1a2e;
+        }
+
+        input[type="range"] {
+            -webkit-appearance: none;
+            appearance: none;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 3px;
+            width: 100%;
+            padding: 0;
+            margin: 5px 0;
+            outline: none;
+            box-sizing: border-box;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: white;
+            cursor: pointer;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: white;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+        }
+
+        .toggle-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .toggle-row span {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .toggle {
+            width: 44px;
+            height: 24px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            cursor: pointer;
+            position: relative;
+            transition: background 0.3s;
+        }
+
+        .toggle.active {
+            background: linear-gradient(90deg, rgba(0, 255, 128, 0.5), rgba(148, 0, 211, 0.5));
+        }
+
+        .toggle::after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 20px;
+            height: 20px;
+            background: white;
+            border-radius: 50%;
+            transition: transform 0.3s;
+        }
+
+        .toggle.active::after {
+            transform: translateX(20px);
+        }
+
+        .value-display {
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.5);
+            text-align: right;
+            margin-top: 2px;
+        }
+
+        .visibility-btn {
+            width: 100%;
+            padding: 10px;
+            margin-top: 15px;
+            border: none;
+            border-radius: 6px;
+            font-size: 12px;
+            cursor: pointer;
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: background 0.2s;
+            text-transform: lowercase;
+        }
+
+        .visibility-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-group .visibility-btn {
+            flex: 1;
+            margin-top: 0;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .action-buttons > button {
+            flex: 1;
+        }
+
+        .copy-code-btn {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 6px;
+            font-size: 12px;
+            cursor: pointer;
+            background: linear-gradient(135deg, rgba(0, 255, 128, 0.3), rgba(148, 0, 211, 0.3));
+            color: #fff;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: background 0.2s, transform 0.1s;
+            text-transform: lowercase;
+        }
+
+        .copy-code-btn:hover {
+            background: linear-gradient(135deg, rgba(0, 255, 128, 0.5), rgba(148, 0, 211, 0.5));
+        }
+
+        .copy-code-btn:active {
+            transform: scale(0.98);
+        }
+
+        .copy-code-btn.copied {
+            background: rgba(0, 255, 128, 0.4);
+        }
+
+        .record-btn {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 6px;
+            font-size: 12px;
+            cursor: pointer;
+            background: rgba(233, 69, 96, 0.3);
+            color: #fff;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: background 0.2s, transform 0.1s;
+            text-transform: lowercase;
+        }
+
+        .record-btn:hover {
+            background: rgba(233, 69, 96, 0.5);
+        }
+
+        .record-btn:active {
+            transform: scale(0.98);
+        }
+
+        .record-btn.recording {
+            background: rgba(233, 69, 96, 0.7);
+            animation: pulse 1s infinite;
+        }
+
+        .record-btn.processing {
+            background: rgba(255, 193, 7, 0.5);
+            cursor: wait;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+
+        .record-options {
+            margin-top: 8px;
+            padding: 8px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 6px;
+            display: none;
+        }
+
+        .record-options.visible {
+            display: block;
+        }
+
+        .settings-toggle-btn {
+            width: 100%;
+            padding: 8px;
+            margin-top: 8px;
+            border: none;
+            border-radius: 6px;
+            font-size: 11px;
+            cursor: pointer;
+            background: rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            transition: background 0.2s;
+            text-transform: lowercase;
+        }
+
+        .settings-toggle-btn:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .settings-toggle-btn.active {
+            background: rgba(255, 255, 255, 0.2);
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .record-options .toggle-row {
+            margin-bottom: 8px;
+        }
+
+        .record-options .toggle-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .record-options select {
+            margin-top: 5px;
+        }
+
+        .group-title {
+            font-size: 10px;
+            color: rgba(255, 255, 255, 0.4);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 15px;
+            margin-bottom: 10px;
+            padding-bottom: 5px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .group-title:first-of-type {
+            margin-top: 0;
+        }
+
+        .color-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .color-row span {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .color-picker {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 40px;
+            height: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 6px;
+            cursor: pointer;
+            background: transparent;
+            padding: 0;
+        }
+
+        .color-picker::-webkit-color-swatch-wrapper {
+            padding: 2px;
+        }
+
+        .color-picker::-webkit-color-swatch {
+            border-radius: 4px;
+            border: none;
+        }
+
+        .color-picker::-moz-color-swatch {
+            border-radius: 4px;
+            border: none;
+        }
+    </style>
+</head>
+<body>
+
+
+    <div class="controls">
+        <h3>settings</h3>
+        
+        <div class="controls-grid">
+            <!-- Left Column: Pattern -->
+            <div class="controls-column">
+                <div class="group-title">pattern</div>
+
+                <div class="control-group">
+                    <label>density</label>
+                    <input type="range" id="densitySlider" min="10" max="100" value="50">
+                    <div class="value-display" id="densityValue">50%</div>
+                </div>
+
+                <div class="control-group">
+                    <label>dot size</label>
+                    <input type="range" id="dotSizeSlider" min="0" max="10" value="5">
+                    <div class="value-display" id="dotSizeValue">5</div>
+                </div>
+
+                <div class="control-group">
+                    <label>max opacity</label>
+                    <input type="range" id="maxOpacitySlider" min="0" max="100" value="100">
+                    <div class="value-display" id="maxOpacityValue">100%</div>
+                </div>
+
+                <div class="toggle-row">
+                    <span>solid pattern</span>
+                    <div class="toggle" id="solidPatternToggle"></div>
+                </div>
+
+                <div class="toggle-row">
+                    <span>pattern aurora</span>
+                    <div class="toggle" id="patternAuroraToggle"></div>
+                </div>
+
+                <div class="group-title">aurora colors</div>
+
+                <div class="color-row">
+                    <span>color 1</span>
+                    <input type="color" class="color-picker" id="auroraColor1Picker" value="#00ff80">
+                </div>
+
+                <div class="color-row">
+                    <span>color 2</span>
+                    <input type="color" class="color-picker" id="auroraColor2Picker" value="#9400d3">
+                </div>
+            </div>
+
+            <!-- Right Column: Effect -->
+            <div class="controls-column">
+                <div class="group-title">effect</div>
+
+                <div class="control-group">
+                    <label>effect</label>
+                    <select id="effectSelect">
+                        <option value="none">none</option>
+                        <option value="wave" selected>wave</option>
+                        <option value="twinkle">twinkle</option>
+                    </select>
+                </div>
+
+                <div class="toggle-row">
+                    <span>effect aurora</span>
+                    <div class="toggle" id="effectAuroraToggle"></div>
+                </div>
+
+                <div class="control-group">
+                    <label>dead zone</label>
+                    <input type="range" id="deadzoneSlider" min="0" max="100" value="20">
+                    <div class="value-display" id="deadzoneValue">20%</div>
+                </div>
+
+                <div id="waveControls" style="display: block;">
+                    <div class="toggle-row">
+                        <span>combine sparkle</span>
+                        <div class="toggle" id="waveCombineSparkleToggle"></div>
+                    </div>
+
+                    <div class="control-group" id="waveSparkleBaseOpacityGroup" style="display: none;">
+                        <label>sparkle base opacity</label>
+                        <input type="range" id="waveSparkleBaseOpacitySlider" min="0" max="100" value="0">
+                        <div class="value-display" id="waveSparkleBaseOpacityValue">0%</div>
+                    </div>
+                </div>
+
+                <div id="twinkleControls" style="display: none;">
+                    <div class="control-group">
+                        <label>mode</label>
+                        <select id="twinkleModeSelect">
+                            <option value="sparkle">sparkle</option>
+                            <option value="wave">wave</option>
+                        </select>
+                    </div>
+
+                    <div class="toggle-row">
+                        <span>combined</span>
+                        <div class="toggle" id="twinkleCombinedToggle"></div>
+                    </div>
+
+                    <div class="control-group" id="baseOpacityGroup" style="display: none;">
+                        <label>base opacity</label>
+                        <input type="range" id="twinkleBaseOpacitySlider" min="0" max="100" value="30">
+                        <div class="value-display" id="twinkleBaseOpacityValue">30%</div>
+                    </div>
+
+                    <div class="control-group">
+                        <label>speed</label>
+                        <input type="range" id="twinkleSpeedSlider" min="1" max="100" value="50">
+                        <div class="value-display" id="twinkleSpeedValue">50%</div>
+                    </div>
+
+                    <div class="control-group">
+                        <label>density</label>
+                        <input type="range" id="twinkleDensitySlider" min="0" max="100" value="50">
+                        <div class="value-display" id="twinkleDensityValue">50%</div>
+                    </div>
+
+                    <div class="control-group">
+                        <label>size</label>
+                        <input type="range" id="twinkleSizeSlider" min="10" max="100" value="50">
+                        <div class="value-display" id="twinkleSizeValue">50%</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer: Actions -->
+            <div class="controls-footer">
+                <div class="btn-group">
+                    <button class="visibility-btn" id="playPauseBtn">pause</button>
+                    <button class="visibility-btn" id="visibilityBtn">hide</button>
+                </div>
+
+                <div class="action-buttons">
+                    <button class="copy-code-btn" id="copyCodeBtn">copy code</button>
+                    <button class="record-btn" id="recordBtn">⏺ record</button>
+                </div>
+                
+                <button class="settings-toggle-btn" id="recordSettingsBtn">⚙ record settings</button>
+                <div class="record-options" id="recordOptions">
+                    <div class="toggle-row">
+                        <span>transparent bg</span>
+                        <div class="toggle active" id="transparentToggle"></div>
+                    </div>
+                    <div class="toggle-row">
+                        <span>export alpha mask</span>
+                        <div class="toggle" id="alphaMaskToggle"></div>
+                    </div>
+                    <div class="control-group">
+                        <label>resolution</label>
+                        <select id="resolutionSelect">
+                            <option value="640x360">640×360 (nHD)</option>
+                            <option value="854x480">854×480 (FWVGA)</option>
+                            <option value="1280x720">1280×720 (HD)</option>
+                            <option value="1366x768">1366×768 (WXGA)</option>
+                            <option value="1440x900" selected>1440×900 (WXGA+)</option>
+                            <option value="1536x864">1536×864</option>
+                            <option value="1600x900">1600×900 (HD+)</option>
+                            <option value="1920x1080">1920×1080 (FHD)</option>
+                            <option value="2560x1440">2560×1440 (QHD)</option>
+                        </select>
+                    </div>
+                    <div class="control-group" style="margin-bottom: 0;">
+                        <label>duration</label>
+                        <select id="durationSelect">
+                            <option value="5">5 seconds</option>
+                            <option value="10">10 seconds</option>
+                            <option value="15">15 seconds</option>
+                            <option value="30" selected>30 seconds</option>
+                            <option value="45">45 seconds</option>
+                            <option value="60">1 minute</option>
+                            <option value="90">1.5 minutes</option>
+                            <option value="120">2 minutes</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="borealis.js"></script>
+    <script>
+        // Color helper functions
+        function rgbToHex(r, g, b) {
+            return '#' + [r, g, b].map(x => x.toString(16).padStart(2, '0')).join('');
+        }
+        
+        function hexToRgb(hex) {
+            const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+            return result ? [
+                parseInt(result[1], 16),
+                parseInt(result[2], 16),
+                parseInt(result[3], 16)
+            ] : [255, 255, 255];
+        }
+
+        // URL State Management
+        const params = new URLSearchParams(window.location.search);
+        
+        function getParam(key, defaultValue) {
+            const value = params.get(key);
+            if (value === null) return defaultValue;
+            if (value === 'true') return true;
+            if (value === 'false') return false;
+            // Check if it's a hex color
+            if (value.startsWith('#')) return value;
+            const num = parseInt(value);
+            return isNaN(num) ? value : num;
+        }
+        
+        function updateURL() {
+            const newParams = new URLSearchParams();
+            const effect = borealis.getEffect();
+            newParams.set('effectType', effect.type);
+            newParams.set('density', borealis.getOption('density'));
+            newParams.set('dotSize', borealis.getOption('dotSize'));
+            newParams.set('maxOpacity', Math.round(borealis.getOption('maxOpacity') * 100));
+            newParams.set('solidPattern', borealis.getOption('solidPattern'));
+            newParams.set('patternAurora', borealis.getOption('patternAurora'));
+            newParams.set('effectAurora', effect.aurora);
+            newParams.set('deadzone', effect.deadzone);
+            newParams.set('combineSparkle', effect.combineSparkle);
+            newParams.set('sparkleBaseOpacity', effect.sparkleBaseOpacity);
+            newParams.set('twinkleMode', effect.mode);
+            newParams.set('twinkleCombined', effect.combined);
+            newParams.set('baseOpacity', effect.baseOpacity);
+            newParams.set('twinkleSpeed', effect.twinkleSpeed);
+            newParams.set('effectDensity', effect.density);
+            newParams.set('effectSize', effect.size);
+            newParams.set('auroraColor1', rgbToHex(...borealis.getOption('auroraColor1')));
+            newParams.set('auroraColor2', rgbToHex(...borealis.getOption('auroraColor2')));
+            window.history.replaceState({}, '', '?' + newParams.toString());
+        }
+
+        // Get initial values from URL
+        const initialEffectType = getParam('effectType', 'twinkle');
+        const initialDensity = getParam('density', 72);
+        const initialDotSize = getParam('dotSize', 2);
+        const initialMaxOpacity = getParam('maxOpacity', 48);
+        const initialSolidPattern = getParam('solidPattern', true);
+        const initialPatternAurora = getParam('patternAurora', true);
+        const initialEffectAurora = getParam('effectAurora', false);
+        const initialDeadzone = getParam('deadzone', 60);
+        const initialCombineSparkle = getParam('combineSparkle', false);
+        const initialSparkleBaseOpacity = getParam('sparkleBaseOpacity', 0);
+        const initialTwinkleMode = getParam('twinkleMode', 'sparkle');
+        const initialTwinkleCombined = getParam('twinkleCombined', true);
+        const initialBaseOpacity = getParam('baseOpacity', 0);
+        const initialTwinkleSpeed = getParam('twinkleSpeed', 1);
+        const initialEffectDensity = getParam('effectDensity', 37);
+        const initialEffectSize = getParam('effectSize', 27);
+        const initialAuroraColor1 = getParam('auroraColor1', '#00ff80');
+        const initialAuroraColor2 = getParam('auroraColor2', '#9400d3');
+
+        // Buttons
+        const playPauseBtn = document.getElementById('playPauseBtn');
+        const visibilityBtn = document.getElementById('visibilityBtn');
+        let isPlaying = true;
+
+        // Initialize Borealis with URL values
+        const borealis = new Borealis({
+            effect: {
+                type: initialEffectType,
+                aurora: initialEffectAurora,
+                deadzone: initialDeadzone,
+                combineSparkle: initialCombineSparkle,
+                sparkleBaseOpacity: initialSparkleBaseOpacity,
+                mode: initialTwinkleMode,
+                combined: initialTwinkleCombined,
+                baseOpacity: initialBaseOpacity,
+                twinkleSpeed: initialTwinkleSpeed,
+                density: initialEffectDensity,
+                size: initialEffectSize
+            },
+            density: initialDensity,
+            dotSize: initialDotSize,
+            maxOpacity: initialMaxOpacity / 100,
+            solidPattern: initialSolidPattern,
+            patternAurora: initialPatternAurora,
+            auroraColor1: hexToRgb(initialAuroraColor1),
+            auroraColor2: hexToRgb(initialAuroraColor2),
+            onShow: () => {
+                visibilityBtn.textContent = 'hide';
+            },
+            onHide: () => {
+                visibilityBtn.textContent = 'show';
+            }
+        });
+
+        // Initialize UI from URL values
+        const effectSelect = document.getElementById('effectSelect');
+        const twinkleControls = document.getElementById('twinkleControls');
+        const densitySlider = document.getElementById('densitySlider');
+        const densityValue = document.getElementById('densityValue');
+        const dotSizeSlider = document.getElementById('dotSizeSlider');
+        const dotSizeValue = document.getElementById('dotSizeValue');
+        const maxOpacitySlider = document.getElementById('maxOpacitySlider');
+        const maxOpacityValue = document.getElementById('maxOpacityValue');
+        const patternAuroraToggle = document.getElementById('patternAuroraToggle');
+        const effectAuroraToggle = document.getElementById('effectAuroraToggle');
+        const solidPatternToggle = document.getElementById('solidPatternToggle');
+        const deadzoneSlider = document.getElementById('deadzoneSlider');
+        const deadzoneValue = document.getElementById('deadzoneValue');
+        const waveControls = document.getElementById('waveControls');
+        const waveCombineSparkleToggle = document.getElementById('waveCombineSparkleToggle');
+        const waveSparkleBaseOpacityGroup = document.getElementById('waveSparkleBaseOpacityGroup');
+        const waveSparkleBaseOpacitySlider = document.getElementById('waveSparkleBaseOpacitySlider');
+        const waveSparkleBaseOpacityValue = document.getElementById('waveSparkleBaseOpacityValue');
+        const twinkleModeSelect = document.getElementById('twinkleModeSelect');
+        const twinkleCombinedToggle = document.getElementById('twinkleCombinedToggle');
+        const baseOpacityGroup = document.getElementById('baseOpacityGroup');
+        const twinkleBaseOpacitySlider = document.getElementById('twinkleBaseOpacitySlider');
+        const twinkleBaseOpacityValue = document.getElementById('twinkleBaseOpacityValue');
+        const auroraColor1Picker = document.getElementById('auroraColor1Picker');
+        const auroraColor2Picker = document.getElementById('auroraColor2Picker');
+        const twinkleSpeedSlider = document.getElementById('twinkleSpeedSlider');
+        const twinkleSpeedValue = document.getElementById('twinkleSpeedValue');
+        const twinkleDensitySlider = document.getElementById('twinkleDensitySlider');
+        const twinkleDensityValue = document.getElementById('twinkleDensityValue');
+        const twinkleSizeSlider = document.getElementById('twinkleSizeSlider');
+        const twinkleSizeValue = document.getElementById('twinkleSizeValue');
+
+        // Set initial UI state
+        effectSelect.value = initialEffectType;
+        twinkleControls.style.display = initialEffectType === 'twinkle' ? 'block' : 'none';
+        densitySlider.value = initialDensity;
+        densityValue.textContent = initialDensity + '%';
+        dotSizeSlider.value = initialDotSize;
+        dotSizeValue.textContent = initialDotSize;
+        maxOpacitySlider.value = initialMaxOpacity;
+        maxOpacityValue.textContent = initialMaxOpacity + '%';
+        if (initialPatternAurora) patternAuroraToggle.classList.add('active');
+        if (initialEffectAurora) effectAuroraToggle.classList.add('active');
+        if (initialSolidPattern) solidPatternToggle.classList.add('active');
+        deadzoneSlider.value = initialDeadzone;
+        deadzoneValue.textContent = initialDeadzone + '%';
+        // Wave controls initial state
+        waveControls.style.display = initialEffectType === 'wave' ? 'block' : 'none';
+        if (initialCombineSparkle) {
+            waveCombineSparkleToggle.classList.add('active');
+            waveSparkleBaseOpacityGroup.style.display = 'block';
+        }
+        waveSparkleBaseOpacitySlider.value = initialSparkleBaseOpacity;
+        waveSparkleBaseOpacityValue.textContent = initialSparkleBaseOpacity + '%';
+        // Twinkle controls initial state
+        twinkleModeSelect.value = initialTwinkleMode;
+        if (initialTwinkleCombined) {
+            twinkleCombinedToggle.classList.add('active');
+            baseOpacityGroup.style.display = 'block';
+        }
+        twinkleBaseOpacitySlider.value = initialBaseOpacity;
+        twinkleBaseOpacityValue.textContent = initialBaseOpacity + '%';
+        twinkleSpeedSlider.value = initialTwinkleSpeed;
+        twinkleSpeedValue.textContent = initialTwinkleSpeed + '%';
+        twinkleDensitySlider.value = initialEffectDensity;
+        twinkleDensityValue.textContent = initialEffectDensity + '%';
+        twinkleSizeSlider.value = initialEffectSize;
+        twinkleSizeValue.textContent = initialEffectSize + '%';
+        // Aurora color pickers initial state
+        auroraColor1Picker.value = initialAuroraColor1;
+        auroraColor2Picker.value = initialAuroraColor2;
+
+        // Play/Pause handler
+        playPauseBtn.addEventListener('click', () => {
+            if (isPlaying) {
+                borealis.stop();
+                playPauseBtn.textContent = 'play';
+            } else {
+                borealis.start();
+                playPauseBtn.textContent = 'pause';
+            }
+            isPlaying = !isPlaying;
+        });
+
+        // Visibility handler
+        visibilityBtn.addEventListener('click', () => {
+            borealis.toggle();
+        });
+
+        // Effect select
+        effectSelect.addEventListener('change', (e) => {
+            borealis.setEffect(e.target.value);
+            twinkleControls.style.display = e.target.value === 'twinkle' ? 'block' : 'none';
+            waveControls.style.display = e.target.value === 'wave' ? 'block' : 'none';
+            updateURL();
+        });
+
+        // Wave combine sparkle toggle
+        waveCombineSparkleToggle.addEventListener('click', () => {
+            const isActive = waveCombineSparkleToggle.classList.toggle('active');
+            borealis.setEffect(borealis.getEffect().type, { combineSparkle: isActive });
+            waveSparkleBaseOpacityGroup.style.display = isActive ? 'block' : 'none';
+            updateURL();
+        });
+
+        // Wave sparkle base opacity slider
+        waveSparkleBaseOpacitySlider.addEventListener('input', (e) => {
+            const value = parseInt(e.target.value);
+            waveSparkleBaseOpacityValue.textContent = value + '%';
+            borealis.setEffect(borealis.getEffect().type, { sparkleBaseOpacity: value });
+            updateURL();
+        });
+
+        // Density slider
+        densitySlider.addEventListener('input', (e) => {
+            const value = parseInt(e.target.value);
+            densityValue.textContent = value + '%';
+            borealis.setOption('density', value);
+            updateURL();
+        });
+
+        // Dot size slider
+        dotSizeSlider.addEventListener('input', (e) => {
+            const value = parseInt(e.target.value);
+            dotSizeValue.textContent = value;
+            borealis.setOption('dotSize', value);
+            updateURL();
+        });
+
+        // Max opacity slider
+        maxOpacitySlider.addEventListener('input', (e) => {
+            const value = parseInt(e.target.value);
+            maxOpacityValue.textContent = value + '%';
+            borealis.setOption('maxOpacity', value / 100);
+            updateURL();
+        });
+
+        // Pattern aurora toggle
+        patternAuroraToggle.addEventListener('click', () => {
+            const isActive = patternAuroraToggle.classList.toggle('active');
+            borealis.setOption('patternAurora', isActive);
+            updateURL();
+        });
+
+        // Effect aurora toggle
+        effectAuroraToggle.addEventListener('click', () => {
+            const isActive = effectAuroraToggle.classList.toggle('active');
+            borealis.setEffect(borealis.getEffect().type, { aurora: isActive });
+            updateURL();
+        });
+
+        // Solid pattern toggle
+        solidPatternToggle.addEventListener('click', () => {
+            const isActive = solidPatternToggle.classList.toggle('active');
+            borealis.setOption('solidPattern', isActive);
+            updateURL();
+        });
+
+        // Twinkle mode select
+        twinkleModeSelect.addEventListener('change', (e) => {
+            borealis.setEffect(null, { mode: e.target.value });
+            updateURL();
+        });
+
+        // Twinkle combined toggle
+        twinkleCombinedToggle.addEventListener('click', () => {
+            const isActive = twinkleCombinedToggle.classList.toggle('active');
+            borealis.setEffect(null, { combined: isActive });
+            baseOpacityGroup.style.display = isActive ? 'block' : 'none';
+            updateURL();
+        });
+
+        // Twinkle base opacity slider
+        twinkleBaseOpacitySlider.addEventListener('input', (e) => {
+            const value = parseInt(e.target.value);
+            twinkleBaseOpacityValue.textContent = value + '%';
+            borealis.setEffect(null, { baseOpacity: value });
+            updateURL();
+        });
+
+        // Twinkle speed slider
+        twinkleSpeedSlider.addEventListener('input', (e) => {
+            const value = parseInt(e.target.value);
+            twinkleSpeedValue.textContent = value + '%';
+            borealis.setEffect(null, { twinkleSpeed: value });
+            updateURL();
+        });
+
+        // Twinkle density slider
+        twinkleDensitySlider.addEventListener('input', (e) => {
+            const value = parseInt(e.target.value);
+            twinkleDensityValue.textContent = value + '%';
+            borealis.setEffect(null, { density: value });
+            updateURL();
+        });
+
+        // Twinkle size slider
+        twinkleSizeSlider.addEventListener('input', (e) => {
+            const value = parseInt(e.target.value);
+            twinkleSizeValue.textContent = value + '%';
+            borealis.setEffect(null, { size: value });
+            updateURL();
+        });
+
+        // Deadzone slider
+        deadzoneSlider.addEventListener('input', (e) => {
+            const value = parseInt(e.target.value);
+            deadzoneValue.textContent = value + '%';
+            borealis.setEffect(borealis.getEffect().type, { deadzone: value });
+            updateURL();
+        });
+
+        // Aurora color 1 picker
+        auroraColor1Picker.addEventListener('input', (e) => {
+            borealis.setOption('auroraColor1', hexToRgb(e.target.value));
+            updateURL();
+        });
+
+        // Aurora color 2 picker
+        auroraColor2Picker.addEventListener('input', (e) => {
+            borealis.setOption('auroraColor2', hexToRgb(e.target.value));
+            updateURL();
+        });
+
+        // Log available methods
+        console.log('Borealis initialized. Available methods:');
+        console.log('- borealis.show()');
+        console.log('- borealis.hide()');
+        console.log('- borealis.toggle()');
+        console.log('- borealis.setOption(key, value)');
+        console.log('- borealis.getOptions()');
+
+        // Copy code button
+        const copyCodeBtn = document.getElementById('copyCodeBtn');
+        
+        function generateCode() {
+            const opts = borealis.getOptions();
+            const defaultOpts = {
+                effect: 'wave',
+                density: 50,
+                dotSize: 5,
+                maxOpacity: 1,
+                solidPattern: false,
+                patternAurora: false,
+                effectAurora: false,
+                deadzone: 20,
+                waveCombineSparkle: false,
+                waveSparkleBaseOpacity: 0,
+                twinkleMode: 'sparkle',
+                twinkleCombined: false,
+                twinkleBaseOpacity: 30,
+                twinkleSpeed: 50,
+                twinkleDensity: 50,
+                twinkleSize: 50
+            };
+            
+            // Only include options that differ from defaults
+            const customOpts = {};
+            
+            if (opts.effect !== defaultOpts.effect) customOpts.effect = opts.effect;
+            if (opts.density !== defaultOpts.density) customOpts.density = opts.density;
+            if (opts.dotSize !== defaultOpts.dotSize) customOpts.dotSize = opts.dotSize;
+            if (opts.maxOpacity !== defaultOpts.maxOpacity) customOpts.maxOpacity = opts.maxOpacity;
+            if (opts.solidPattern !== defaultOpts.solidPattern) customOpts.solidPattern = opts.solidPattern;
+            if (opts.patternAurora !== defaultOpts.patternAurora) customOpts.patternAurora = opts.patternAurora;
+            if (opts.effectAurora !== defaultOpts.effectAurora) customOpts.effectAurora = opts.effectAurora;
+            if (opts.deadzone !== defaultOpts.deadzone) customOpts.deadzone = opts.deadzone;
+            if (opts.waveCombineSparkle !== defaultOpts.waveCombineSparkle) customOpts.waveCombineSparkle = opts.waveCombineSparkle;
+            if (opts.waveSparkleBaseOpacity !== defaultOpts.waveSparkleBaseOpacity) customOpts.waveSparkleBaseOpacity = opts.waveSparkleBaseOpacity;
+            if (opts.twinkleMode !== defaultOpts.twinkleMode) customOpts.twinkleMode = opts.twinkleMode;
+            if (opts.twinkleCombined !== defaultOpts.twinkleCombined) customOpts.twinkleCombined = opts.twinkleCombined;
+            if (opts.twinkleBaseOpacity !== defaultOpts.twinkleBaseOpacity) customOpts.twinkleBaseOpacity = opts.twinkleBaseOpacity;
+            if (opts.twinkleSpeed !== defaultOpts.twinkleSpeed) customOpts.twinkleSpeed = opts.twinkleSpeed;
+            if (opts.twinkleDensity !== defaultOpts.twinkleDensity) customOpts.twinkleDensity = opts.twinkleDensity;
+            if (opts.twinkleSize !== defaultOpts.twinkleSize) customOpts.twinkleSize = opts.twinkleSize;
+            
+            // Generate code
+            if (Object.keys(customOpts).length === 0) {
+                return `const borealis = new Borealis();`;
+            }
+            
+            const optsStr = JSON.stringify(customOpts, null, 4)
+                .replace(/"([^"]+)":/g, '$1:')
+                .replace(/"/g, "'");
+            
+            return `const borealis = new Borealis(${optsStr});`;
+        }
+        
+        copyCodeBtn.addEventListener('click', async () => {
+            const code = generateCode();
+            try {
+                await navigator.clipboard.writeText(code);
+                copyCodeBtn.textContent = 'copied!';
+                copyCodeBtn.classList.add('copied');
+                setTimeout(() => {
+                    copyCodeBtn.textContent = 'copy code';
+                    copyCodeBtn.classList.remove('copied');
+                }, 2000);
+            } catch (err) {
+                // Fallback for older browsers
+                const textarea = document.createElement('textarea');
+                textarea.value = code;
+                document.body.appendChild(textarea);
+                textarea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textarea);
+                copyCodeBtn.textContent = 'copied!';
+                copyCodeBtn.classList.add('copied');
+                setTimeout(() => {
+                    copyCodeBtn.textContent = 'copy code';
+                    copyCodeBtn.classList.remove('copied');
+                }, 2000);
+            }
+        });
+
+        // Recorder
+        const recordBtn = document.getElementById('recordBtn');
+        const recordOptions = document.getElementById('recordOptions');
+        const transparentToggle = document.getElementById('transparentToggle');
+        const alphaMaskToggle = document.getElementById('alphaMaskToggle');
+        const resolutionSelect = document.getElementById('resolutionSelect');
+        const durationSelect = document.getElementById('durationSelect');
+        let isRecording = false;
+        let mediaRecorder = null;
+        let alphaMaskRecorder = null;
+        let recordedChunks = [];
+        let alphaMaskChunks = [];
+        let recordingTimestamp = null;
+
+        // Record settings toggle button
+        const recordSettingsBtn = document.getElementById('recordSettingsBtn');
+        
+        recordSettingsBtn.addEventListener('click', () => {
+            recordSettingsBtn.classList.toggle('active');
+            recordOptions.classList.toggle('visible');
+        });
+
+        transparentToggle.addEventListener('click', () => {
+            transparentToggle.classList.toggle('active');
+        });
+
+        alphaMaskToggle.addEventListener('click', () => {
+            alphaMaskToggle.classList.toggle('active');
+        });
+
+        recordBtn.addEventListener('click', async () => {
+            if (isRecording) {
+                stopRecording();
+                return;
+            }
+
+            isRecording = true;
+            recordBtn.classList.add('recording');
+            recordSettingsBtn.classList.remove('active');
+            recordOptions.classList.remove('visible');
+            
+            // Generate timestamp for this recording session
+            recordingTimestamp = Date.now();
+            
+            const duration = parseInt(durationSelect.value) * 1000;
+            const transparent = transparentToggle.classList.contains('active');
+            const exportAlphaMask = alphaMaskToggle.classList.contains('active');
+            const resolution = resolutionSelect.value.split('x');
+            const targetWidth = parseInt(resolution[0]);
+            const targetHeight = parseInt(resolution[1]);
+            const canvas = document.querySelector('canvas');
+            
+            // Create offscreen canvas for main recording
+            const offscreen = document.createElement('canvas');
+            offscreen.width = targetWidth;
+            offscreen.height = targetHeight;
+            const offCtx = offscreen.getContext('2d');
+            
+            // Create alpha mask canvas if needed
+            let alphaCanvas, alphaCtx;
+            if (exportAlphaMask) {
+                alphaCanvas = document.createElement('canvas');
+                alphaCanvas.width = targetWidth;
+                alphaCanvas.height = targetHeight;
+                alphaCtx = alphaCanvas.getContext('2d');
+            }
+
+            // WebM recording using MediaRecorder
+            const stream = offscreen.captureStream(30);
+            mediaRecorder = new MediaRecorder(stream, {
+                mimeType: 'video/webm;codecs=vp9',
+                videoBitsPerSecond: 5000000
+            });
+            recordedChunks = [];
+            
+            mediaRecorder.ondataavailable = (e) => {
+                if (e.data.size > 0) recordedChunks.push(e.data);
+            };
+            
+            mediaRecorder.onstop = () => {
+                const blob = new Blob(recordedChunks, { type: 'video/webm' });
+                downloadFile(blob, 'webm', false, recordingTimestamp);
+            };
+            
+            // Alpha mask recorder if enabled
+            if (exportAlphaMask) {
+                const alphaStream = alphaCanvas.captureStream(30);
+                alphaMaskRecorder = new MediaRecorder(alphaStream, {
+                    mimeType: 'video/webm;codecs=vp9',
+                    videoBitsPerSecond: 3000000
+                });
+                alphaMaskChunks = [];
+                
+                alphaMaskRecorder.ondataavailable = (e) => {
+                    if (e.data.size > 0) alphaMaskChunks.push(e.data);
+                };
+                
+                alphaMaskRecorder.onstop = () => {
+                    const alphaBlob = new Blob(alphaMaskChunks, { type: 'video/webm' });
+                    downloadFile(alphaBlob, 'webm', true, recordingTimestamp);
+                };
+                
+                alphaMaskRecorder.start();
+            }
+            
+            mediaRecorder.start();
+            
+            const startTime = Date.now();
+            const captureFrame = () => {
+                if (!isRecording || Date.now() - startTime >= duration) {
+                    finishRecording();
+                    return;
+                }
+                
+                const elapsed = Date.now() - startTime;
+                const progress = Math.min(100, Math.floor((elapsed / duration) * 100));
+                recordBtn.textContent = `⏺ recording ${progress}%`;
+                
+                // Draw main frame
+                if (transparent) {
+                    offCtx.clearRect(0, 0, targetWidth, targetHeight);
+                } else {
+                    offCtx.fillStyle = '#1a1a2e';
+                    offCtx.fillRect(0, 0, targetWidth, targetHeight);
+                }
+                offCtx.drawImage(canvas, 0, 0, targetWidth, targetHeight);
+                
+                // Draw alpha mask if enabled
+                if (exportAlphaMask) {
+                    // Get alpha from main canvas
+                    const imageData = offCtx.getImageData(0, 0, targetWidth, targetHeight);
+                    const data = imageData.data;
+                    
+                    // Create grayscale from alpha channel
+                    alphaCtx.fillStyle = '#000000';
+                    alphaCtx.fillRect(0, 0, targetWidth, targetHeight);
+                    const alphaImageData = alphaCtx.getImageData(0, 0, targetWidth, targetHeight);
+                    const alphaData = alphaImageData.data;
+                    
+                    for (let i = 0; i < data.length; i += 4) {
+                        const alpha = data[i + 3];
+                        alphaData[i] = alpha;
+                        alphaData[i + 1] = alpha;
+                        alphaData[i + 2] = alpha;
+                        alphaData[i + 3] = 255;
+                    }
+                    
+                    alphaCtx.putImageData(alphaImageData, 0, 0);
+                }
+                
+                requestAnimationFrame(captureFrame);
+            };
+            captureFrame();
+        });
+
+        function stopRecording() {
+            isRecording = false;
+        }
+
+        function finishRecording() {
+            isRecording = false;
+            recordBtn.classList.remove('recording');
+            
+            if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+                mediaRecorder.stop();
+            }
+            
+            if (alphaMaskRecorder && alphaMaskRecorder.state !== 'inactive') {
+                alphaMaskRecorder.stop();
+            }
+            
+            recordBtn.textContent = '⏺ record';
+        }
+
+        function downloadFile(blob, extension, isAlphaMask = false, timestamp = null) {
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            const suffix = isAlphaMask ? '-alpha' : '';
+            const ts = timestamp || Date.now();
+            a.download = `borealis-${ts}${suffix}.${extension}`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+    </script>
+</body>
+</html>
