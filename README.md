@@ -9,18 +9,11 @@ An interactive, animated canvas background with noise-based patterns and visual 
 
 ## Features
 
-- 🌟 **Noise-based patterns** - Beautiful river-like patterns using Simplex noise with domain warping
-- 🔵 **Solid dot pattern** - Clean grid of uniform dots (alternative to noise)
-- ✨ **Wave effect** - Diagonal sparkling wave that sweeps across the screen
-- 💫 **Twinkle effect** - Grouped star twinkling with customizable dead zone
-- 🌈 **Aurora colors** - Optional cyan-green to violet color gradient
-- 🎯 **Radial collapse/expand** - Smooth show/hide animations from center
-- 🎬 **WebM Recording** - Export animations as high-quality video (VP9 codec)
-- 🎭 **Alpha Mask Export** - Generate separate luma matte video for compositing
-- 💾 **URL State Persistence** - Share configurations via URL parameters
-- 📋 **Copy Code Button** - Generate initialization code from current settings
+- ✨ **Multiple effects** - Wave, twinkle, and noise-based patterns with domain warping
+- 🌈 **Aurora colors** - Customizable gradient color schemes
+- 🎯 **Animations** - Smooth radial collapse/expand show/hide transitions
 - ⚡ **Highly customizable** - 40+ configurable options
-- 📱 **Responsive** - Automatically adapts to window size
+- 📱 **Responsive** - Automatically adapts to container or window size
 - 🪶 **Lightweight** - No dependencies, pure JavaScript
 - 📦 **TypeScript support** - Full type definitions included
 
