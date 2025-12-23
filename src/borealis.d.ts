@@ -50,6 +50,10 @@ declare module '@diabolic/borealis' {
         height?: number | null;
         /** If true, uses fixed positioning to cover viewport (default: true) */
         fullscreen?: boolean;
+        /** Canvas z-index (default: 0) */
+        zIndex?: number;
+        /** If true, starts collapsed/hidden (default: false) */
+        initiallyHidden?: boolean;
         
         // Grid settings
         /** Grid density (10-100) */

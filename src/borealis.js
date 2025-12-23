@@ -88,6 +88,8 @@ class Borealis {
             width: null,                    // Canvas width (null = auto from container/window)
             height: null,                   // Canvas height (null = auto from container/window)
             fullscreen: true,               // If true, uses fixed positioning to cover viewport
+            zIndex: 0,                      // Canvas z-index (can be any integer)
+            initiallyHidden: false,         // If true, starts collapsed/hidden
             
             // Grid settings
             density: 50,                    // Grid density (10-100)
@@ -177,6 +179,7 @@ class Borealis {
         this.canvas = document.createElement('canvas');
         
         // Set canvas styles based on mode
+        const zIndex = this.options.zIndex;
         if (this.options.fullscreen) {
             this.canvas.style.cssText = `
                 position: fixed;
@@ -185,7 +188,7 @@ class Borealis {
                 width: 100%;
                 height: 100%;
                 pointer-events: none;
-                z-index: 0;
+                z-index: ${zIndex};
             `;
         } else {
             this.canvas.style.cssText = `
@@ -195,6 +198,7 @@ class Borealis {
                 width: 100%;
                 height: 100%;
                 pointer-events: none;
+                z-index: ${zIndex};
             `;
         }
         
@@ -226,8 +230,8 @@ class Borealis {
         this._sparkleWaiting = false;
         this._sparkleWaitUntil = 0;
         this._diagPos = 0;
-        this._isCollapsing = false;
-        this._collapseProgress = 0;
+        this._isCollapsing = this.options.initiallyHidden;  // Stay collapsed until manual show() call
+        this._collapseProgress = this.options.initiallyHidden ? 1 + this.options.collapseWaveWidth : 0;  // Start fully hidden if initiallyHidden is true
         this._isRunning = false;
         this._animationId = null;
         

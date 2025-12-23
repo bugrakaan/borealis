@@ -109,12 +109,14 @@
             position: fixed;
             top: 20px;
             right: 20px;
-            background: rgba(0, 0, 0, 0.4);
-            backdrop-filter: blur(10px);
+            background: rgba(10, 10, 20, 0.6);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
             padding: 15px;
             border-radius: 12px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            z-index: 100;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            z-index: 2147483647;
             width: 420px;
             max-height: calc(100vh - 40px);
             overflow-y: auto;
@@ -184,8 +186,11 @@
 
         select {
             width: 100%;
-            padding: 8px;
-            background: rgba(255, 255, 255, 0.1);
+            padding: 8px 32px 8px 12px;
+            background: rgba(255, 255, 255, 0.1) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23ffffff' d='M6 8L1 3h10z'/%3E%3C/svg%3E") no-repeat right 10px center;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
             border: 1px solid rgba(255, 255, 255, 0.2);
             border-radius: 6px;
             color: #fff;
@@ -196,6 +201,22 @@
 
         select option {
             background: #1a1a2e;
+        }
+
+        input[type="number"] {
+            width: 100%;
+            padding: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 6px;
+            color: #fff;
+            font-size: 12px;
+            box-sizing: border-box;
+            outline: none;
+        }
+
+        input[type="number"]:focus {
+            border-color: rgba(255, 255, 255, 0.4);
         }
 
         input[type="range"] {
@@ -500,7 +521,7 @@
             color: #fff;
             font-size: 24px;
             cursor: pointer;
-            z-index: 101;
+            z-index: 2147483647;
             backdrop-filter: blur(10px);
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
             transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
@@ -710,6 +731,18 @@
         <div class="controls-grid">
             <!-- Left Column: Pattern -->
             <div class="controls-column">
+                <div class="group-title">canvas</div>
+
+                <div class="control-group">
+                    <label>z-index</label>
+                    <input type="number" id="zIndexInput" value="0">
+                </div>
+
+                <div class="toggle-row">
+                    <span>initially hidden</span>
+                    <div class="toggle" id="initiallyHiddenToggle"></div>
+                </div>
+
                 <div class="group-title">pattern</div>
 
                 <div class="control-group">
@@ -894,6 +927,7 @@
             controls.classList.toggle('panel-open');
             settingsToggle.classList.toggle('active');
             settingsToggle.textContent = controls.classList.contains('panel-open') ? '✕' : '⚙️';
+            updateURL();
         });
 
         // Close settings when clicking outside
@@ -902,6 +936,7 @@
                 controls.classList.remove('panel-open');
                 settingsToggle.classList.remove('active');
                 settingsToggle.textContent = '⚙️';
+                updateURL();
             }
         });
 
@@ -954,6 +989,9 @@
             newParams.set('effectSize', effect.size);
             newParams.set('auroraColor1', rgbToHex(...borealis.getOption('auroraColor1')));
             newParams.set('auroraColor2', rgbToHex(...borealis.getOption('auroraColor2')));
+            newParams.set('zIndex', parseInt(borealis.canvas.style.zIndex) || 0);
+            newParams.set('initiallyHidden', initiallyHiddenToggle.classList.contains('active'));
+            newParams.set('panelOpen', controls.classList.contains('panel-open'));
             window.history.replaceState({}, '', '?' + newParams.toString());
         }
 
@@ -976,6 +1014,9 @@
         const initialEffectSize = getParam('effectSize', 27);
         const initialAuroraColor1 = getParam('auroraColor1', '#00ff80');
         const initialAuroraColor2 = getParam('auroraColor2', '#9400d3');
+        const initialZIndex = getParam('zIndex', 0);
+        const initialInitiallyHidden = getParam('initiallyHidden', false);
+        const initialPanelOpen = getParam('panelOpen', false);
 
         // Buttons
         const playPauseBtn = document.getElementById('playPauseBtn');
@@ -1004,6 +1045,8 @@
             patternAurora: initialPatternAurora,
             auroraColor1: hexToRgb(initialAuroraColor1),
             auroraColor2: hexToRgb(initialAuroraColor2),
+            zIndex: initialZIndex,
+            initiallyHidden: initialInitiallyHidden,
             onShow: () => {
                 visibilityBtn.textContent = 'hide';
             },
@@ -1059,6 +1102,15 @@
         if (initialSolidPattern) solidPatternToggle.classList.add('active');
         deadzoneSlider.value = initialDeadzone;
         deadzoneValue.textContent = initialDeadzone + '%';
+        // Canvas controls initial state
+        document.getElementById('zIndexInput').value = initialZIndex;
+        if (initialInitiallyHidden) document.getElementById('initiallyHiddenToggle').classList.add('active');
+        // Settings panel initial state
+        if (initialPanelOpen) {
+            controls.classList.add('panel-open');
+            settingsToggle.classList.add('active');
+            settingsToggle.textContent = '✕';
+        }
         // Wave controls initial state
         waveControls.style.display = initialEffectType === 'wave' ? 'block' : 'none';
         if (initialCombineSparkle) {
@@ -1123,6 +1175,28 @@
             const value = parseInt(e.target.value);
             waveSparkleBaseOpacityValue.textContent = value + '%';
             borealis.setEffect(borealis.getEffect().type, { sparkleBaseOpacity: value });
+            updateURL();
+        });
+
+        // Z-index input
+        const zIndexInput = document.getElementById('zIndexInput');
+        zIndexInput.addEventListener('input', (e) => {
+            const value = parseInt(e.target.value) || 0;
+            borealis.canvas.style.zIndex = value;
+            updateURL();
+        });
+
+        // Initially hidden toggle
+        const initiallyHiddenToggle = document.getElementById('initiallyHiddenToggle');
+        initiallyHiddenToggle.addEventListener('click', () => {
+            initiallyHiddenToggle.classList.toggle('active');
+            // This is a demo-only toggle, shows current state
+            // For actual use, this option only works on initialization
+            if (initiallyHiddenToggle.classList.contains('active')) {
+                borealis.hide();
+            } else {
+                borealis.show();
+            }
             updateURL();
         });
 

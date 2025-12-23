@@ -248,6 +248,11 @@ borealis.destroy();
 | Option | Type | Default | Description |
 |--------|------|---------|-------------|
 | `container` | `HTMLElement` | `document.body` | Parent element for the canvas |
+| `width` | `number \| null` | `null` | Canvas width (null = auto from container/window) |
+| `height` | `number \| null` | `null` | Canvas height (null = auto from container/window) |
+| `fullscreen` | `boolean` | `true` | Use fixed positioning to cover viewport |
+| `zIndex` | `number` | `0` | Canvas z-index |
+| `initiallyHidden` | `boolean` | `false` | Start collapsed/hidden |
 
 ### Grid Options
 

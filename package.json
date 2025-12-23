@@ -25,8 +25,9 @@
     "access": "public"
   },
   "scripts": {
-    "build": "rollup -c && cp src/borealis.d.ts dist/",
+    "build": "rollup -c && cp src/borealis.d.ts dist/ && cp dist/borealis.js docs/",
     "build:watch": "rollup -c -w",
+    "dev": "concurrently -k \"npm run build:watch\" \"npx live-server docs --port=8080 --wait=1000\" \"npx chokidar 'dist/borealis.js' -c 'cp dist/borealis.js docs/'\"",
     "prepublishOnly": "npm run build"
   },
   "repository": {
@@ -55,6 +56,8 @@
   "homepage": "https://bugrakaan.github.io/borealis/",
   "devDependencies": {
     "@rollup/plugin-terser": "^0.4.4",
+    "chokidar-cli": "^3.0.0",
+    "concurrently": "^9.2.1",
     "rollup": "^4.9.1"
   }
 }
