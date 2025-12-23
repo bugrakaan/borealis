@@ -1,6 +1,6 @@
 /**
  * Borealis - Interactive Animated Background
- * @version 1.0.1
+ * @version 1.0.3
  * @license MIT
  */
 /**

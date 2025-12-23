@@ -1,6 +1,6 @@
 {
   "name": "@diabolic/borealis",
-  "version": "1.0.1",
+  "version": "1.0.3",
   "description": "Interactive animated canvas background with noise patterns, wave effects, and aurora colors",
   "type": "module",
   "main": "dist/borealis.js",
