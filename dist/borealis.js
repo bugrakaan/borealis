@@ -101,6 +101,8 @@
                 fullscreen: true,               // If true, uses fixed positioning to cover viewport
                 zIndex: 0,                      // Canvas z-index (can be any integer)
                 initiallyHidden: false,         // If true, starts collapsed/hidden
+                className: null,                // Custom class name for canvas
+                background: null,               // Canvas background (color, gradient, etc.)
                 
                 // Grid settings
                 density: 50,                    // Grid density (10-100)
@@ -189,8 +191,14 @@
             // Create canvas
             this.canvas = document.createElement('canvas');
             
+            // Set custom class name if provided
+            if (this.options.className) {
+                this.canvas.className = this.options.className;
+            }
+            
             // Set canvas styles based on mode
             const zIndex = this.options.zIndex;
+            const background = this.options.background ? `background: ${this.options.background};` : '';
             if (this.options.fullscreen) {
                 this.canvas.style.cssText = `
                 position: fixed;
@@ -200,6 +208,7 @@
                 height: 100%;
                 pointer-events: none;
                 z-index: ${zIndex};
+                ${background}
             `;
             } else {
                 this.canvas.style.cssText = `
@@ -210,6 +219,7 @@
                 height: 100%;
                 pointer-events: none;
                 z-index: ${zIndex};
+                ${background}
             `;
             }
             

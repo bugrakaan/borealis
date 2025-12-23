@@ -54,6 +54,10 @@ declare module '@diabolic/borealis' {
         zIndex?: number;
         /** If true, starts collapsed/hidden (default: false) */
         initiallyHidden?: boolean;
+        /** Custom class name for canvas */
+        className?: string | null;
+        /** Canvas background (color, gradient, etc.) */
+        background?: string | null;
         
         // Grid settings
         /** Grid density (10-100) */

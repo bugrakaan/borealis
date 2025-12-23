@@ -253,6 +253,8 @@ borealis.destroy();
 | `fullscreen` | `boolean` | `true` | Use fixed positioning to cover viewport |
 | `zIndex` | `number` | `0` | Canvas z-index |
 | `initiallyHidden` | `boolean` | `false` | Start collapsed/hidden |
+| `className` | `string \| null` | `null` | Custom class name for canvas |
+| `background` | `string \| null` | `null` | Canvas background (color, gradient, etc.) |
 
 ### Grid Options
 

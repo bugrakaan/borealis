@@ -219,6 +219,26 @@
             border-color: rgba(255, 255, 255, 0.4);
         }
 
+        input[type="text"] {
+            width: 100%;
+            padding: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 6px;
+            color: #fff;
+            font-size: 12px;
+            box-sizing: border-box;
+            outline: none;
+        }
+
+        input[type="text"]:focus {
+            border-color: rgba(255, 255, 255, 0.4);
+        }
+
+        input[type="text"]::placeholder {
+            color: rgba(255, 255, 255, 0.3);
+        }
+
         input[type="range"] {
             -webkit-appearance: none;
             appearance: none;
@@ -738,6 +758,16 @@
                     <input type="number" id="zIndexInput" value="0">
                 </div>
 
+                <div class="control-group">
+                    <label>class name</label>
+                    <input type="text" id="classNameInput" placeholder="custom-class">
+                </div>
+
+                <div class="control-group">
+                    <label>background</label>
+                    <input type="text" id="backgroundInput" placeholder="transparent, #000, linear-gradient(...)">
+                </div>
+
                 <div class="toggle-row">
                     <span>initially hidden</span>
                     <div class="toggle" id="initiallyHiddenToggle"></div>
@@ -990,6 +1020,8 @@
             newParams.set('auroraColor1', rgbToHex(...borealis.getOption('auroraColor1')));
             newParams.set('auroraColor2', rgbToHex(...borealis.getOption('auroraColor2')));
             newParams.set('zIndex', parseInt(borealis.canvas.style.zIndex) || 0);
+            newParams.set('className', document.getElementById('classNameInput').value || '');
+            newParams.set('background', document.getElementById('backgroundInput').value || '');
             newParams.set('initiallyHidden', initiallyHiddenToggle.classList.contains('active'));
             newParams.set('panelOpen', controls.classList.contains('panel-open'));
             window.history.replaceState({}, '', '?' + newParams.toString());
@@ -1015,6 +1047,8 @@
         const initialAuroraColor1 = getParam('auroraColor1', '#00ff80');
         const initialAuroraColor2 = getParam('auroraColor2', '#9400d3');
         const initialZIndex = getParam('zIndex', 0);
+        const initialClassName = getParam('className', '');
+        const initialBackground = getParam('background', '');
         const initialInitiallyHidden = getParam('initiallyHidden', false);
         const initialPanelOpen = getParam('panelOpen', false);
 
@@ -1046,6 +1080,8 @@
             auroraColor1: hexToRgb(initialAuroraColor1),
             auroraColor2: hexToRgb(initialAuroraColor2),
             zIndex: initialZIndex,
+            className: initialClassName || null,
+            background: initialBackground || null,
             initiallyHidden: initialInitiallyHidden,
             onShow: () => {
                 visibilityBtn.textContent = 'hide';
@@ -1104,6 +1140,8 @@
         deadzoneValue.textContent = initialDeadzone + '%';
         // Canvas controls initial state
         document.getElementById('zIndexInput').value = initialZIndex;
+        document.getElementById('classNameInput').value = initialClassName;
+        document.getElementById('backgroundInput').value = initialBackground;
         if (initialInitiallyHidden) document.getElementById('initiallyHiddenToggle').classList.add('active');
         // Settings panel initial state
         if (initialPanelOpen) {
@@ -1183,6 +1221,20 @@
         zIndexInput.addEventListener('input', (e) => {
             const value = parseInt(e.target.value) || 0;
             borealis.canvas.style.zIndex = value;
+            updateURL();
+        });
+
+        // Class name input
+        const classNameInput = document.getElementById('classNameInput');
+        classNameInput.addEventListener('input', (e) => {
+            borealis.canvas.className = e.target.value;
+            updateURL();
+        });
+
+        // Background input
+        const backgroundInput = document.getElementById('backgroundInput');
+        backgroundInput.addEventListener('input', (e) => {
+            borealis.canvas.style.background = e.target.value;
             updateURL();
         });
 
