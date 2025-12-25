@@ -1,6 +1,6 @@
 /**
  * Borealis - Interactive Animated Background
- * @version 1.0.3
+ * @version 1.0.5
  * @license MIT
  */
 /**
@@ -148,8 +148,15 @@ class Borealis {
             colorScale: 0.003,              // Color variation scale
             
             // Collapse settings
-            collapseSpeed: 0.1,             // Collapse animation speed
+            collapseSpeed: 0.1,             // Collapse animation speed (used when duration not specified)
             collapseWaveWidth: 0.4,         // Width of the collapse transition
+            showDuration: null,             // Show animation duration in ms (null = use collapseSpeed)
+            hideDuration: null,             // Hide animation duration in ms (null = use collapseSpeed)
+            fadeOpacity: true,              // Fade canvas opacity during show/hide animations
+            revealingClass: 'borealis-revealing', // Class added during show animation
+            visibleClass: 'borealis-visible',     // Class added when fully visible
+            hidingClass: 'borealis-hiding',       // Class added during hide animation
+            hiddenClass: 'borealis-hidden',       // Class added when fully hidden
             
             // Animation
             autoStart: true,                // Start animation automatically
@@ -249,6 +256,17 @@ class Borealis {
         this._collapseProgress = this.options.initiallyHidden ? 1 + this.options.collapseWaveWidth : 0;  // Start fully hidden if initiallyHidden is true
         this._isRunning = false;
         this._animationId = null;
+        this._showSpeed = null;
+        this._hideSpeed = null;
+        
+        // Set initial CSS class and opacity based on initiallyHidden
+        if (this.options.initiallyHidden) {
+            if (this.options.hiddenClass) this.canvas.classList.add(this.options.hiddenClass);
+            if (this.options.fadeOpacity) this.canvas.style.opacity = 0;
+        } else {
+            if (this.options.visibleClass) this.canvas.classList.add(this.options.visibleClass);
+            if (this.options.fadeOpacity) this.canvas.style.opacity = 1;
+        }
         
         // Computed twinkle values
         this._twinkleThreshold = 0.8;
@@ -947,21 +965,74 @@ class Borealis {
      */
     _updateCollapse() {
         const collapseEnd = 1 + this.options.collapseWaveWidth;
+        const opts = this.options;
         
         if (this._isCollapsing && this._collapseProgress < collapseEnd) {
-            this._collapseProgress += this.options.collapseSpeed;
+            // Use duration-based speed if hideDuration is set
+            const speed = this._hideSpeed || opts.collapseSpeed;
+            this._collapseProgress += speed;
+            
+            // Update canvas opacity if fadeOpacity is enabled
+            if (opts.fadeOpacity) {
+                const progress = Math.min(this._collapseProgress / collapseEnd, 1);
+                this.canvas.style.opacity = 1 - progress;
+            }
+            
+            // Update CSS classes
+            if (opts.hidingClass && !this.canvas.classList.contains(opts.hidingClass)) {
+                this.canvas.classList.remove(opts.revealingClass, opts.visibleClass);
+                this.canvas.classList.add(opts.hidingClass);
+            }
+            
             if (this._collapseProgress >= collapseEnd) {
                 this._collapseProgress = collapseEnd;
-                if (this.options.onHide) {
-                    this.options.onHide();
+                this._hideSpeed = null;
+                
+                // Set final opacity
+                if (opts.fadeOpacity) {
+                    this.canvas.style.opacity = 0;
+                }
+                
+                // Update CSS classes
+                if (opts.hidingClass) this.canvas.classList.remove(opts.hidingClass);
+                if (opts.hiddenClass) this.canvas.classList.add(opts.hiddenClass);
+                
+                if (opts.onHide) {
+                    opts.onHide();
                 }
             }
         } else if (!this._isCollapsing && this._collapseProgress > 0) {
-            this._collapseProgress -= this.options.collapseSpeed;
+            // Use duration-based speed if showDuration is set
+            const speed = this._showSpeed || opts.collapseSpeed;
+            this._collapseProgress -= speed;
+            
+            // Update canvas opacity if fadeOpacity is enabled
+            if (opts.fadeOpacity) {
+                const progress = Math.max(this._collapseProgress / collapseEnd, 0);
+                this.canvas.style.opacity = 1 - progress;
+            }
+            
+            // Update CSS classes
+            if (opts.revealingClass && !this.canvas.classList.contains(opts.revealingClass)) {
+                this.canvas.classList.remove(opts.hidingClass, opts.hiddenClass);
+                this.canvas.classList.add(opts.revealingClass);
+            }
+            
             if (this._collapseProgress <= 0) {
                 this._collapseProgress = 0;
-                if (this.options.onShow) {
-                    this.options.onShow();
+                this._showSpeed = null;
+                
+                // Set final opacity
+                if (opts.fadeOpacity) {
+                    this.canvas.style.opacity = 1;
+                }
+                
+                // Update CSS classes
+                if (opts.revealingClass) this.canvas.classList.remove(opts.revealingClass);
+                if (opts.visibleClass) this.canvas.classList.add(opts.visibleClass);
+                
+                if (opts.onShow) {
+                    opts.onShow();
                 }
             }
         }
@@ -1081,15 +1152,37 @@ class Borealis {
 
     /**
      * Show the pattern (expand from center)
-     * @param {Function} [callback] - Called when animation completes
+     * @param {number|Function} [durationOrCallback] - Duration in ms or callback function
+     * @param {Function} [callback] - Called when animation completes (if first param is duration)
      * @returns {Borealis} this instance for chaining
      */
-    show(callback) {
+    show(durationOrCallback, callback) {
+        let duration = null;
+        let cb = null;
+        
+        if (typeof durationOrCallback === 'function') {
+            cb = durationOrCallback;
+        } else if (typeof durationOrCallback === 'number') {
+            duration = durationOrCallback;
+            cb = callback;
+        }
+        
+        // Calculate speed from duration
+        if (duration !== null) {
+            const collapseEnd = 1 + this.options.collapseWaveWidth;
+            const framesNeeded = duration / 16.67; // ~60fps
+            this._showSpeed = collapseEnd / framesNeeded;
+        } else if (this.options.showDuration) {
+            const collapseEnd = 1 + this.options.collapseWaveWidth;
+            const framesNeeded = this.options.showDuration / 16.67;
+            this._showSpeed = collapseEnd / framesNeeded;
+        }
+        
         this._isCollapsing = false;
-        if (callback) {
+        if (cb) {
             const originalCallback = this.options.onShow;
             this.options.onShow = () => {
-                callback();
+                cb();
                 this.options.onShow = originalCallback;
             };
         }
@@ -1098,15 +1191,37 @@ class Borealis {
 
     /**
      * Hide the pattern (collapse to center)
-     * @param {Function} [callback] - Called when animation completes
+     * @param {number|Function} [durationOrCallback] - Duration in ms or callback function
+     * @param {Function} [callback] - Called when animation completes (if first param is duration)
      * @returns {Borealis} this instance for chaining
      */
-    hide(callback) {
+    hide(durationOrCallback, callback) {
+        let duration = null;
+        let cb = null;
+        
+        if (typeof durationOrCallback === 'function') {
+            cb = durationOrCallback;
+        } else if (typeof durationOrCallback === 'number') {
+            duration = durationOrCallback;
+            cb = callback;
+        }
+        
+        // Calculate speed from duration
+        if (duration !== null) {
+            const collapseEnd = 1 + this.options.collapseWaveWidth;
+            const framesNeeded = duration / 16.67; // ~60fps
+            this._hideSpeed = collapseEnd / framesNeeded;
+        } else if (this.options.hideDuration) {
+            const collapseEnd = 1 + this.options.collapseWaveWidth;
+            const framesNeeded = this.options.hideDuration / 16.67;
+            this._hideSpeed = collapseEnd / framesNeeded;
+        }
+        
         this._isCollapsing = true;
-        if (callback) {
+        if (cb) {
             const originalCallback = this.options.onHide;
             this.options.onHide = () => {
-                callback();
+                cb();
                 this.options.onHide = originalCallback;
             };
         }
@@ -1115,14 +1230,15 @@ class Borealis {
 
     /**
      * Toggle between show and hide
-     * @param {Function} [callback] - Called when animation completes
+     * @param {number|Function} [durationOrCallback] - Duration in ms or callback function
+     * @param {Function} [callback] - Called when animation completes (if first param is duration)
      * @returns {Borealis} this instance for chaining
      */
-    toggle(callback) {
+    toggle(durationOrCallback, callback) {
         if (this._isCollapsing) {
-            return this.show(callback);
+            return this.show(durationOrCallback, callback);
         } else {
-            return this.hide(callback);
+            return this.hide(durationOrCallback, callback);
         }
     }
 

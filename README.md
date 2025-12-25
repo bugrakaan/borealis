@@ -329,8 +329,15 @@ borealis.destroy();
 
 | Option | Type | Default | Description |
 |--------|------|---------|-------------|
-| `collapseSpeed` | `number` | `0.1` | Collapse/expand animation speed |
+| `collapseSpeed` | `number` | `0.1` | Collapse/expand animation speed (used when duration not specified) |
 | `collapseWaveWidth` | `number` | `0.4` | Width of the collapse transition |
+| `showDuration` | `number \| null` | `null` | Show animation duration in ms (null = use collapseSpeed) |
+| `hideDuration` | `number \| null` | `null` | Hide animation duration in ms (null = use collapseSpeed) |
+| `fadeOpacity` | `boolean` | `true` | Fade canvas opacity during show/hide animations |
+| `revealingClass` | `string` | `'borealis-revealing'` | Class added during show animation |
+| `visibleClass` | `string` | `'borealis-visible'` | Class added when fully visible |
+| `hidingClass` | `string` | `'borealis-hiding'` | Class added during hide animation |
+| `hiddenClass` | `string` | `'borealis-hidden'` | Class added when fully hidden |
 
 ### Animation Options
 

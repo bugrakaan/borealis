@@ -110,10 +110,24 @@ declare module '@diabolic/borealis' {
         colorScale?: number;
         
         // Collapse settings
-        /** Collapse animation speed */
+        /** Collapse animation speed (used when duration not specified) */
         collapseSpeed?: number;
         /** Width of the collapse transition */
         collapseWaveWidth?: number;
+        /** Show animation duration in ms (null = use collapseSpeed) */
+        showDuration?: number | null;
+        /** Hide animation duration in ms (null = use collapseSpeed) */
+        hideDuration?: number | null;
+        /** Fade canvas opacity during show/hide animations (default: true) */
+        fadeOpacity?: boolean;
+        /** Class added during show animation */
+        revealingClass?: string;
+        /** Class added when fully visible */
+        visibleClass?: string;
+        /** Class added during hide animation */
+        hidingClass?: string;
+        /** Class added when fully hidden */
+        hiddenClass?: string;
         
         // Animation
         /** Start animation automatically */
@@ -170,24 +184,27 @@ declare module '@diabolic/borealis' {
         
         /**
          * Show the pattern (expand from center)
-         * @param callback - Called when animation completes
+         * @param durationOrCallback - Duration in ms or callback function
+         * @param callback - Called when animation completes (if first param is duration)
          * @returns this instance for chaining
          */
-        show(callback?: () => void): this;
+        show(durationOrCallback?: number | (() => void), callback?: () => void): this;
         
         /**
          * Hide the pattern (collapse to center)
-         * @param callback - Called when animation completes
+         * @param durationOrCallback - Duration in ms or callback function
+         * @param callback - Called when animation completes (if first param is duration)
          * @returns this instance for chaining
          */
-        hide(callback?: () => void): this;
+        hide(durationOrCallback?: number | (() => void), callback?: () => void): this;
         
         /**
          * Toggle between show and hide
-         * @param callback - Called when animation completes
+         * @param durationOrCallback - Duration in ms or callback function
+         * @param callback - Called when animation completes (if first param is duration)
          * @returns this instance for chaining
          */
-        toggle(callback?: () => void): this;
+        toggle(durationOrCallback?: number | (() => void), callback?: () => void): this;
         
         /**
          * Check if currently visible (not collapsed)
